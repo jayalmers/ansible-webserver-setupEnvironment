@@ -1,0 +1,59 @@
+- name: Ensure Apache is installed and running
+  yum: name="{{ item }}" state=latest
+  with_items:
+    - httpd24
+    - httpd24-devel
+  become: yes
+  become_method: "sudo"
+
+- name: Install PHP and associated modules
+  yum: name="{{ item }}" state=latest
+  with_items:
+    - php56
+    - php56-gd
+    - php56-mbstring
+    - php56-mcrypt
+    - php56-pdo
+    - php56-mysqlnd
+  become: yes
+  become_method: "sudo"
+
+- name: Ensure Apache is set to auto-restart
+  service:
+    name: httpd
+    enabled: yes  
+  become: yes
+  become_method: "sudo"
+
+- name: Ensure Apache is running
+  service:
+    name: httpd
+    state: started
+  become: yes
+  become_method: "sudo"
+  register: httpd_status
+
+- name: Apache status
+  debug:
+    var: httpd_status["state"]
+
+- name: Add simple homepage file
+  copy:
+    src: ./files/index.php
+    dest: /var/www/html/index.php
+    owner: apache
+    group: apache
+    mode: 0755
+  become: yes
+  become_method: "sudo"
+
+- name: Add load balancer status file
+  copy:
+    src: ./files/status.txt
+    dest: /var/www/html/status.txt
+    owner: apache
+    group: apache
+    mode: 0755
+  become: yes
+  become_method: "sudo"
+

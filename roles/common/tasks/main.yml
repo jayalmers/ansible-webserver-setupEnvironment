@@ -1,0 +1,6 @@
+- name: Update all existing packages
+  yum:
+    name: '*'
+    state: latest
+  become: yes
+  become_method: "sudo"

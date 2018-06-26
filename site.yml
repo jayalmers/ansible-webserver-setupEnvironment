@@ -1,0 +1,11 @@
+---
+- hosts: webservers
+  serial: "50%" 
+  tasks:
+    - name: Run all common plays
+      import_role:
+        name: common
+
+    - name: Run all webserver plays
+      import_role:
+        name: webservers
